@@ -3,10 +3,10 @@ dubbo:
     name: provider-demo
   protocol:
     name: dubbo
-    port: 20880
+    port: 20880 #如果部署多台 端口不同重复
     status: server
   registry:
     address: 10.9.216.1:2181,10.9.216.14:2181,10.9.217.3:2181
     protocol: zookeeper
 server:
-  port: 7001
+  port: 7001  #如果部署多台 端口不同重复
