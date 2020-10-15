@@ -4,7 +4,11 @@ dubbo:
   registry:
     address: 10.9.216.1:2181,10.9.216.14:2181,10.9.217.3:2181
     protocol: zookeeper
+    check: true # true注册订阅失败时报错
   consumer:
-    timeout: 3000
+    timeout: 3000 # 调用服务超时时间  reference > service > consumer > provider
+    retries: 2 # 不包含第一次调用
+    check: true # 启动时检查提供者是否存在，true报错，false忽略
+    loadbalance: roundrobin
 server:
   port: 8001

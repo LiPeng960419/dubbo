@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
  * @Date: 2019/9/23 16:38
  */
 @Slf4j
-@Service
-public class UserServiceImpl implements UserService {
+@Service(version = "2.0.0")
+public class UserServiceImplV2 implements UserService {
 
     @Value("${server.port}")
     private int port;
@@ -26,9 +26,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultVo<User> getUserV1(String name) {
+        // dubbo超时配置
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         User user = new User();
         user.setName(name);
-        user.setPassword("passwordV1");
+        user.setPassword("UserServiceImplV2 passwordV1");
         return ResultVo.success(user);
     }
 
@@ -36,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public ResultVo getUserV2(String name) {
         User user = new User();
         user.setName(name);
-        user.setPassword("passwordV2");
+        user.setPassword("UserServiceImplV2 passwordV2");
         return ResultVo.success(user);
     }
 

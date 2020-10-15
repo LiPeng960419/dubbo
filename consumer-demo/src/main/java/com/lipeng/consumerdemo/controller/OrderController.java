@@ -17,7 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class OrderController {
 
-    @Reference
+    /*
+    check 检查提供方服务是否可用
+    timeout 调用提供方延时
+    retries 第一次失败后 之后重试次数
+    version 使用提供方的版本 可以指定 *表示任意
+     */
+    @Reference(check = true, retries = 2, timeout = 5000, version = "*")
     private UserService userService;
 
     @GetMapping("/order/{userId}")
