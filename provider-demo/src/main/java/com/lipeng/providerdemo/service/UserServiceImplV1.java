@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
 import com.lipeng.common.vo.User;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -24,7 +25,12 @@ public class UserServiceImplV1 implements UserService {
         return "this is provider service,userId:" + userId + ",port:" + port;
     }
 
+    public ResultVo<User> getUserV1Error(String name) {
+        return ResultVo.fail("getUserV1 fallback");
+    }
+
     @Override
+    @HystrixCommand(fallbackMethod = "getUserV1Error")
     public ResultVo<User> getUserV1(String name) {
         // dubbo超时配置
 //        try {
@@ -32,6 +38,10 @@ public class UserServiceImplV1 implements UserService {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+        // 模拟服务异常  服务降级
+        if (Math.random() > 0.5) {
+            throw new RuntimeException();
+        }
         User user = new User();
         user.setName(name);
         user.setPassword("UserServiceImplV1 passwordV1");

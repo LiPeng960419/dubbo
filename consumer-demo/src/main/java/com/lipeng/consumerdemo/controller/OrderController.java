@@ -22,6 +22,8 @@ public class OrderController {
     timeout 调用提供方延时
     retries 第一次失败后 之后重试次数
     version 使用提供方的版本 可以指定 *表示任意
+    url dubbo直连服务提供方  url为提供方路径 如127.0.0.1:7001
+    loadbalance 负载均衡 ramdon roundrobin leastactive 随机，轮询，最少活跃调用
      */
     @Reference(check = true, retries = 2, timeout = 5000,
             version = "*", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
