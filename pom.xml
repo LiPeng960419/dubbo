@@ -19,6 +19,7 @@
     <modules>
         <module>common</module>
         <module>provider-demo</module>
+        <module>consumer-demo</module>
     </modules>
 
     <properties>
