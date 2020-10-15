@@ -26,6 +26,10 @@ public class OrderController {
         return userService.getUser(userId);
     }
 
+    /*
+    v1和v2返回都是对象User
+     */
+
     @GetMapping("/getUserV1")
     public ResultVo getUserV1(String name) {
         ResultVo<User> userV1 = userService.getUserV1(name);
