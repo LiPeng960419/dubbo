@@ -23,7 +23,8 @@ public class OrderController {
     retries 第一次失败后 之后重试次数
     version 使用提供方的版本 可以指定 *表示任意
      */
-    @Reference(check = true, retries = 2, timeout = 5000, version = "*")
+    @Reference(check = true, retries = 2, timeout = 5000,
+            version = "*", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
     private UserService userService;
 
     @GetMapping("/order/{userId}")
