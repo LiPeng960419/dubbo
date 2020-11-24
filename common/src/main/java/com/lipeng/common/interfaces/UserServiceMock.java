@@ -1,6 +1,5 @@
-package com.lipeng.consumerdemo.service;
+package com.lipeng.common.interfaces;
 
-import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
 import com.lipeng.common.vo.User;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @Author: lipeng
  * @Date: 2020/11/24 11:18
+ * @Description mock要和接口在同一个包下面
  */
 @Slf4j
 public class UserServiceMock implements UserService {
