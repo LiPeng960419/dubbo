@@ -1,4 +1,4 @@
-package com.lipeng.common.vo;
+package com.lipeng.common.entity;
 
 import java.io.Serializable;
 import lombok.Data;
@@ -11,6 +11,7 @@ import lombok.Data;
 public class User implements Serializable {
 
     private static final long serialVersionUID = -3016785855988881524L;
+
     private String name;
 
     private String password;

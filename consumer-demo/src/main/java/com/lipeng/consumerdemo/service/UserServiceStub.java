@@ -2,7 +2,8 @@ package com.lipeng.consumerdemo.service;
 
 import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
-import com.lipeng.common.vo.User;
+import com.lipeng.common.entity.User;
+import com.lipeng.common.vo.UserVo;
 import org.springframework.util.StringUtils;
 
 /**
@@ -41,6 +42,17 @@ public class UserServiceStub implements UserService {
             return null;
         }
         return userService.getUserV2(name);
+    }
+
+    @Override
+    public ResultVo getUserV3(UserVo userVo) {
+        if (userVo == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(userVo.getName())) {
+            return null;
+        }
+        return userService.getUserV3(userVo);
     }
 
 }

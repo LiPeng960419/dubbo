@@ -1,8 +1,9 @@
 package com.lipeng.common.interfaces;
 
 
+import com.lipeng.common.entity.User;
 import com.lipeng.common.vo.ResultVo;
-import com.lipeng.common.vo.User;
+import com.lipeng.common.vo.UserVo;
 
 /**
  * @Author: lipeng 910138
@@ -15,5 +16,7 @@ public interface UserService {
     ResultVo<User> getUserV1(String name);
 
     ResultVo getUserV2(String name);
+
+    ResultVo getUserV3(UserVo userVo);
 
 }

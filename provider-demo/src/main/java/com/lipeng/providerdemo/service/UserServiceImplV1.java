@@ -1,11 +1,15 @@
 package com.lipeng.providerdemo.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.lipeng.common.dto.UserDto;
+import com.lipeng.common.entity.User;
 import com.lipeng.common.interfaces.UserService;
+import com.lipeng.common.mapstruct.UserMapper;
 import com.lipeng.common.vo.ResultVo;
-import com.lipeng.common.vo.User;
+import com.lipeng.common.vo.UserVo;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -18,6 +22,9 @@ public class UserServiceImplV1 implements UserService {
 
     @Value("${server.port}")
     private int port;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public String getUser(Long userId) {
@@ -53,6 +60,13 @@ public class UserServiceImplV1 implements UserService {
         User user = new User();
         user.setName(name);
         user.setPassword("UserServiceImplV1 passwordV2");
+        return ResultVo.success(user);
+    }
+
+    @Override
+    public ResultVo getUserV3(UserVo userVo) {
+        UserDto dto = userMapper.convert(userVo);
+        User user = userMapper.convert(dto);
         return ResultVo.success(user);
     }
 

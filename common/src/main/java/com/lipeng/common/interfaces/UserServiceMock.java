@@ -1,7 +1,8 @@
 package com.lipeng.common.interfaces;
 
 import com.lipeng.common.vo.ResultVo;
-import com.lipeng.common.vo.User;
+import com.lipeng.common.entity.User;
+import com.lipeng.common.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,6 +29,12 @@ public class UserServiceMock implements UserService {
     public ResultVo getUserV2(String name) {
         log.error("getUserV2降级");
         return ResultVo.fail("getUserV2降级");
+    }
+
+    @Override
+    public ResultVo getUserV3(UserVo userVo) {
+        log.error("getUserV3降级");
+        return ResultVo.fail("getUserV3降级");
     }
 
 }

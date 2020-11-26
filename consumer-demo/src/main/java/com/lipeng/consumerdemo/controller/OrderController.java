@@ -3,7 +3,8 @@ package com.lipeng.consumerdemo.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
-import com.lipeng.common.vo.User;
+import com.lipeng.common.entity.User;
+import com.lipeng.common.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,12 @@ public class OrderController {
     @GetMapping("/getUserV2")
     public ResultVo getUserV2(String name) {
         ResultVo userV2 = userService.getUserV2(name);
+        return userV2;
+    }
+
+    @GetMapping("/getUserV3")
+    public ResultVo getUserV3(UserVo vo) {
+        ResultVo userV2 = userService.getUserV3(vo);
         return userV2;
     }
 
