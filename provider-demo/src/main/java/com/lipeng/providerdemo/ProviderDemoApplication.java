@@ -9,11 +9,13 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDubbo
 @SpringBootApplication
 @EnableHystrix
-@ComponentScan({"com.lipeng.common","com.lipeng.providerdemo"})
+@ComponentScan({"com.lipeng.common", "com.lipeng.providerdemo"})
 public class ProviderDemoApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ProviderDemoApplication.class, args);
+        SpringApplication app = new SpringApplication(ProviderDemoApplication.class);
+        app.setRegisterShutdownHook(false);
+        app.run(args);
     }
 
 }
