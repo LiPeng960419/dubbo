@@ -8,6 +8,7 @@ import com.lipeng.common.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -54,8 +55,14 @@ public class OrderController {
 
     @GetMapping("/getUserV3")
     public ResultVo getUserV3(UserVo vo) {
-        ResultVo userV2 = userService.getUserV3(vo);
-        return userV2;
+        ResultVo userV3 = userService.getUserV3(vo);
+        return userV3;
+    }
+
+    @GetMapping("/getUserV4")
+    public ResultVo getUserV4(@RequestBody UserVo vo) {
+        ResultVo userV4 = userService.getUserV4(vo);
+        return userV4;
     }
 
 }

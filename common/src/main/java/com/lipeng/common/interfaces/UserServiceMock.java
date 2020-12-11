@@ -37,4 +37,10 @@ public class UserServiceMock implements UserService {
         return ResultVo.fail("getUserV3降级");
     }
 
+    @Override
+    public ResultVo getUserV4(UserVo userVo) {
+        log.error("getUserV4降级");
+        return ResultVo.fail("getUserV4降级");
+    }
+
 }

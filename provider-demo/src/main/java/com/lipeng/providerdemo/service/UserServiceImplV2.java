@@ -60,4 +60,11 @@ public class UserServiceImplV2 implements UserService {
         return ResultVo.success(user);
     }
 
+    @Override
+    public ResultVo getUserV4(UserVo userVo) {
+        UserDto dto = userMapper.convert(userVo);
+        User user = userMapper.convert(dto);
+        return ResultVo.success(user);
+    }
+
 }

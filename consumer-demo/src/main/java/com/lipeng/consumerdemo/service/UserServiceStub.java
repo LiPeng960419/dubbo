@@ -55,4 +55,15 @@ public class UserServiceStub implements UserService {
         return userService.getUserV3(userVo);
     }
 
+    @Override
+    public ResultVo getUserV4(UserVo userVo) {
+        if (userVo == null) {
+            return null;
+        }
+        if (StringUtils.isEmpty(userVo.getName())) {
+            return null;
+        }
+        return userService.getUserV3(userVo);
+    }
+
 }

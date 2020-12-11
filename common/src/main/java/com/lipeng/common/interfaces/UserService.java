@@ -4,6 +4,7 @@ package com.lipeng.common.interfaces;
 import com.lipeng.common.entity.User;
 import com.lipeng.common.vo.ResultVo;
 import com.lipeng.common.vo.UserVo;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @Author: lipeng 910138
@@ -18,5 +19,7 @@ public interface UserService {
     ResultVo getUserV2(String name);
 
     ResultVo getUserV3(UserVo userVo);
+
+    ResultVo getUserV4(@RequestBody UserVo userVo);
 
 }
