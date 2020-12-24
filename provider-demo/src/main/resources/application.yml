@@ -6,7 +6,10 @@ dubbo:
     port: 20880 #如果部署多台 端口不同重复
     status: server
   registry:
-    address: 192.168.7.1:2181
-    protocol: zookeeper
+    #    address: 192.168.7.1:2181
+    #    protocol: zookeeper
+    address: 192.168.7.1:8848
+    protocol: nacos
+    check: true # true注册订阅失败时报错
 server:
   port: 7001  #如果部署多台 端口不同重复
