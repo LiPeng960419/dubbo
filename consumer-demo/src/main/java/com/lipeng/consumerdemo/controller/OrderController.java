@@ -1,9 +1,9 @@
 package com.lipeng.consumerdemo.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.lipeng.common.entity.User;
 import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
-import com.lipeng.common.entity.User;
 import com.lipeng.common.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +26,28 @@ public class OrderController {
     version 使用提供方的版本 可以指定 *表示任意
     url dubbo直连服务提供方  url为提供方路径 如127.0.0.1:7001
     loadbalance 负载均衡 ramdon roundrobin leastactive 随机，轮询，最少活跃调用
+
+    如果注册中心使用nacos 不支持version
      */
     @Reference(check = true, retries = 2, timeout = 5000, mock = "true",
             version = "*", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
     private UserService userService;
+
+    @Reference(check = true, retries = 2, timeout = 5000, mock = "true",
+            version = "1.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
+    private UserService userService1;
+
+    @Reference(check = true, retries = 2, timeout = 5000, mock = "true",
+            version = "2.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
+    private UserService userService2;
+
+    @GetMapping("/nacos/{userId}")
+    public ResultVo nacos(@PathVariable Long userId) {
+        log.info(userService1.getUser(userId));
+        log.info(userService2.getUser(userId));
+
+        return userService1.getUserV1(String.valueOf(userId));
+    }
 
     @GetMapping("/order/{userId}")
     public String order(@PathVariable Long userId) {
@@ -37,10 +55,12 @@ public class OrderController {
         return userService.getUser(userId);
     }
 
-    /*
-    v1和v2返回都是对象User
+    /**
+     * v1和v2返回都是对象User
+     *
+     * @param name
+     * @return
      */
-
     @GetMapping("/getUserV1")
     public ResultVo getUserV1(String name) {
         ResultVo<User> userV1 = userService.getUserV1(name);
