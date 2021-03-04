@@ -1,1 +1,2 @@
 CustomTraceFilter=com.lipeng.common.filter.CustomTraceFilter
+tps=com.alibaba.dubbo.rpc.filter.TpsLimitFilter
