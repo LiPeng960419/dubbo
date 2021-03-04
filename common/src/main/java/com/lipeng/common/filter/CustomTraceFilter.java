@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
  * @Author: lipeng
  * @Date: 2021/03/04 13:59
  */
-@Activate(group = Constants.PROVIDER, value = Constants.TPS_LIMIT_RATE_KEY)
+@Activate(group = Constants.PROVIDER)
 @Slf4j
-public class ProviderFilter implements Filter {
+public class CustomTraceFilter implements Filter {
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {

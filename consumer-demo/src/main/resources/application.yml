@@ -19,7 +19,6 @@ dubbo:
     retries: 2 # 不包含第一次调用
     check: false # 启动时检查提供者是否存在，true报错，false忽略
     loadbalance: roundrobin #负载均衡策略，可选值：random,roundrobin,leastactive，分别表示：随机，轮询，最少活跃调用
-    filter: TpsLimitFilter,ProviderFilter #服务消费方远程调用过程拦截器名称，多个名称用逗号分隔
   provider:
     timeout: 5000 #调用服务超时时间
     retries: 0 #远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
