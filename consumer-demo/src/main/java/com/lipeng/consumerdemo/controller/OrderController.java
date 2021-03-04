@@ -46,6 +46,16 @@ public class OrderController {
         return userService1.getUserV1(String.valueOf(userId));
     }
 
+    @GetMapping("/v1/nacos/{userId}")
+    public ResultVo v1(@PathVariable Long userId) {
+        return userService1.getUserV1(String.valueOf(userId));
+    }
+
+    @GetMapping("/v2/nacos/{userId}")
+    public ResultVo v2(@PathVariable Long userId) {
+        return userService2.getUserV1(String.valueOf(userId));
+    }
+
     @GetMapping("/order/{userId}")
     public String order(@PathVariable Long userId) {
         log.info("OrderController order userId:" + userId);
