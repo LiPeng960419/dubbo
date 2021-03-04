@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @Author: lipeng
  * @Date: 2021/03/04 13:59
  */
-@Activate(group = Constants.PROVIDER)
+@Activate(group = Constants.PROVIDER, order = -1)
 @Slf4j
 public class CustomTraceFilter implements Filter {
 
