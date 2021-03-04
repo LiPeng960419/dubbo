@@ -7,10 +7,21 @@ dubbo:
     address: 192.168.7.1:8848
     protocol: nacos
     check: true # true注册订阅失败时报错
+  protocol:
+    id: dubbo
+    name: dubbo #协议名称
+    port: 28080 #服务端口
+    threadpool: fixed #线程池类型，可选：fixed/cached
+    threads: 200 #服务线程池大小(固定大小)
+    payload: 8388608 #请求及响应数据包大小限制，单位：字节
   consumer:
-    timeout: 3000 # 调用服务超时时间  reference > service > consumer > provider
+    timeout: 5000 # 调用服务超时时间  reference > service > consumer > provider
     retries: 2 # 不包含第一次调用
-    check: true # 启动时检查提供者是否存在，true报错，false忽略
-    loadbalance: roundrobin
+    check: false # 启动时检查提供者是否存在，true报错，false忽略
+    loadbalance: roundrobin #负载均衡策略，可选值：random,roundrobin,leastactive，分别表示：随机，轮询，最少活跃调用
+    filter: TpsLimitFilter,ProviderFilter #服务消费方远程调用过程拦截器名称，多个名称用逗号分隔
+  provider:
+    timeout: 5000 #调用服务超时时间
+    retries: 0 #远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
 server:
   port: 8001

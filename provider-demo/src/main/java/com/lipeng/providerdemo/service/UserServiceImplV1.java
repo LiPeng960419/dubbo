@@ -46,9 +46,9 @@ public class UserServiceImplV1 implements UserService {
 //            e.printStackTrace();
 //        }
         // 模拟服务异常  服务降级
-        if (Math.random() > 0.5) {
-            throw new RuntimeException();
-        }
+//        if (Math.random() > 0.5) {
+//            throw new RuntimeException();
+//        }
         User user = new User();
         user.setName(name);
         user.setPassword("UserServiceImplV1 passwordV1");

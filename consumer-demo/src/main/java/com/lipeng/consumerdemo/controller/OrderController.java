@@ -29,16 +29,13 @@ public class OrderController {
 
     如果注册中心使用nacos 不支持version
      */
-    @Reference(check = true, retries = 2, timeout = 5000, mock = "true",
-            version = "*", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
+    @Reference(mock = "true", version = "*", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
     private UserService userService;
 
-    @Reference(check = true, retries = 2, timeout = 5000, mock = "true",
-            version = "1.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
+    @Reference(mock = "true", version = "1.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
     private UserService userService1;
 
-    @Reference(check = true, retries = 2, timeout = 5000, mock = "true",
-            version = "2.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
+    @Reference(mock = "true", version = "2.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
     private UserService userService2;
 
     @GetMapping("/nacos/{userId}")

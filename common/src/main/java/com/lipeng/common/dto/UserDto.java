@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @Author: lipeng6@ybm100.com
+ * @Author: lipeng
  * @Date: 2020/11/26 9:25
  */
 @Data
