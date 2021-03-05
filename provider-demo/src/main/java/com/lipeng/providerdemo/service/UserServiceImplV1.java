@@ -1,5 +1,6 @@
 package com.lipeng.providerdemo.service;
 
+import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.lipeng.common.dto.UserDto;
 import com.lipeng.common.entity.User;
@@ -7,6 +8,7 @@ import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.mapstruct.UserMapper;
 import com.lipeng.common.vo.ResultVo;
 import com.lipeng.common.vo.UserVo;
+import com.lipeng.providerdemo.filter.RedisRateLimitFilter;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @Date: 2019/9/23 16:38
  */
 @Slf4j
-@Service(version = "1.0.0", parameters = {"tps", "1", "tps.interval", "2000", "limitTime", "5", "limitCount", "1"})
+@Service(version = "1.0.0", parameters = {Constants.TPS_LIMIT_RATE_KEY, "1", Constants.TPS_LIMIT_INTERVAL_KEY, "2000", RedisRateLimitFilter.LIMIT_TIME, "30", RedisRateLimitFilter.LIMIT_COUNT, "5"})
 public class UserServiceImplV1 implements UserService {
 
     @Value("${server.port}")
