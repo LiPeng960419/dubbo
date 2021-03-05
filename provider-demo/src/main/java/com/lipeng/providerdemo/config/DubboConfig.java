@@ -24,7 +24,7 @@ public class DubboConfig {
         log.info("[SpringBootShutdownHook] Register ShutdownHook....");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                System.setProperty("dubbo.service.shutdown.wait", "8000");
+                System.setProperty("dubbo.service.shutdown.wait", "2000");
                 int timeOut = ConfigUtils.getServerShutdownTimeout();
                 log.info("[SpringBootShutdownHook] Application need sleep {} seconds to wait Dubbo shutdown", (double) timeOut / 1000.0D);
                 Thread.sleep(timeOut);

@@ -20,7 +20,7 @@ public class RedisRateLimitFilter implements Filter {
 
     private DefaultRedisScript<Number> redisluaScript;
 
-    private RedisTemplate<String, Object> limitRedisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     public static final String LIMIT_TIME = "limitTime";
     public static final String LIMIT_COUNT = "limitCount";
@@ -32,7 +32,7 @@ public class RedisRateLimitFilter implements Filter {
         String serviceKey = invoker.getUrl().getServiceKey();
         List<String> keys = Collections.singletonList(serviceKey);
 
-        Number number = limitRedisTemplate.execute(redisluaScript, keys, count, time);
+        Number number = redisTemplate.execute(redisluaScript, keys, count, time);
 
         if (number != null && number.intValue() != 0 && number.intValue() <= count) {
             log.info("限流时间段内访问接口:{},第{}次", serviceKey, number.intValue());
@@ -47,8 +47,8 @@ public class RedisRateLimitFilter implements Filter {
         this.redisluaScript = redisluaScript;
     }
 
-    public void setLimitRedisTemplate(RedisTemplate<String, Object> limitRedisTemplate) {
-        this.limitRedisTemplate = limitRedisTemplate;
+    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
 }
