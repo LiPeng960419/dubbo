@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @Date: 2019/9/23 16:38
  */
 @Slf4j
-@Service(version = "1.0.0", parameters = {"tps", "1", "tps.interval", "2000"})
+@Service(version = "1.0.0", parameters = {"tps", "1", "tps.interval", "2000", "limitTime", "5", "limitCount", "1"})
 public class UserServiceImplV1 implements UserService {
 
     @Value("${server.port}")

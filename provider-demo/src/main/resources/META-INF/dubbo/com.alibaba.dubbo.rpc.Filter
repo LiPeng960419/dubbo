@@ -1,2 +1,3 @@
 CustomTraceFilter=com.lipeng.common.filter.CustomTraceFilter
+RedisRateLimitFilter=com.lipeng.providerdemo.filter.RedisRateLimitFilter
 tps=com.alibaba.dubbo.rpc.filter.TpsLimitFilter
