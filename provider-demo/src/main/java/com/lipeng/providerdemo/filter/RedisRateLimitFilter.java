@@ -38,7 +38,7 @@ public class RedisRateLimitFilter implements Filter {
             log.info("限流时间段内访问接口:{},第{}次", serviceKey, number.intValue());
             return invoker.invoke(invocation);
         } else {
-            log.error("限流时间段内访问限制,接口名:{},已访问次数count:{}", serviceKey, number.intValue());
+            log.error("限流时间段内访问限制,接口名:{},访问次数限制为count:{}", serviceKey, number.intValue());
             throw new RpcException("限流时间段内访问限制");
         }
     }
