@@ -55,6 +55,15 @@ public class GrayLoadBalance extends AbstractLoadBalance {
         if (!CollectionUtils.isEmpty(grayList)) {
             return this.randomSelect(grayList, url, invocation);
         }
+        List<Invoker<T>> seversExcludeGray = new ArrayList<>(list);
+        Iterator<Invoker<T>> iterator = seversExcludeGray.iterator();
+        while (iterator.hasNext()) {
+            Invoker<T> invoker = iterator.next();
+            String profile = invoker.getUrl().getParameter("profile", "prod");
+            if (GRAY.equals(profile)) {
+                list.remove(invoker);
+            }
+        }
         return this.randomSelect(list, url, invocation);
     }
 
