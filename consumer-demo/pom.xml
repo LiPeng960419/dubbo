@@ -22,6 +22,11 @@
             <artifactId>common</artifactId>
             <version>V20190923</version>
         </dependency>
+        <dependency>
+            <groupId>com.ctrip.framework.apollo</groupId>
+            <artifactId>apollo-client</artifactId>
+            <version>1.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -1,6 +1,7 @@
 package com.lipeng.consumerdemo.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.lipeng.common.entity.User;
 import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
@@ -48,6 +49,7 @@ public class OrderController {
 
     @GetMapping("/v1/nacos/{userId}")
     public ResultVo v1(@PathVariable Long userId) {
+        RpcContext.getContext().setAttachment("userId", "123");
         return userService1.getUserV1(String.valueOf(userId));
     }
 

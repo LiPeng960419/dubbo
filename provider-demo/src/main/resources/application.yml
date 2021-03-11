@@ -22,6 +22,8 @@ dubbo:
   provider:
     timeout: 5000 #调用服务超时时间
     retries: 0 #远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
+    parameters:
+      profile: gray
 server:
   port: 7001  #如果部署多台 端口不同重复
 spring:
