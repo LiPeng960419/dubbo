@@ -53,6 +53,8 @@ public class GrayLoadBalance extends AbstractLoadBalance {
             }
         }
         if (!CollectionUtils.isEmpty(grayList)) {
+            if (grayList.size() == 1)
+                return grayList.get(0);
             return this.randomSelect(grayList, url, invocation);
         }
         List<Invoker<T>> seversExcludeGray = new ArrayList<>(list);
@@ -64,7 +66,9 @@ public class GrayLoadBalance extends AbstractLoadBalance {
                 list.remove(invoker);
             }
         }
-        return this.randomSelect(list, url, invocation);
+        if (seversExcludeGray.size() == 1)
+            return seversExcludeGray.get(0);
+        return this.randomSelect(seversExcludeGray, url, invocation);
     }
 
     /**
