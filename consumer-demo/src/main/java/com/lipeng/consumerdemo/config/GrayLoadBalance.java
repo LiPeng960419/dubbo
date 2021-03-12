@@ -53,8 +53,6 @@ public class GrayLoadBalance extends AbstractLoadBalance {
             }
         }
         if (!CollectionUtils.isEmpty(grayList)) {
-            if (grayList.size() == 1)
-                return grayList.get(0);
             return this.randomSelect(grayList, url, invocation);
         }
         List<Invoker<T>> seversExcludeGray = new ArrayList<>(list);
@@ -63,11 +61,9 @@ public class GrayLoadBalance extends AbstractLoadBalance {
             Invoker<T> invoker = iterator.next();
             String profile = invoker.getUrl().getParameter("profile", "prod");
             if (GRAY.equals(profile)) {
-                list.remove(invoker);
+                iterator.remove();
             }
         }
-        if (seversExcludeGray.size() == 1)
-            return seversExcludeGray.get(0);
         return this.randomSelect(seversExcludeGray, url, invocation);
     }
 
@@ -83,6 +79,9 @@ public class GrayLoadBalance extends AbstractLoadBalance {
     private <T> Invoker<T> randomSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         if (CollectionUtils.isEmpty(invokers)) {
             throw new RpcException("找不到对应服务提供方,url:" + url.getServiceKey());
+        }
+        if (invokers.size() == 1) {
+            return invokers.get(0);
         }
         int length = invokers.size();
         boolean sameWeight = true;
