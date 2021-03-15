@@ -6,6 +6,7 @@ import com.lipeng.common.entity.User;
 import com.lipeng.common.interfaces.UserService;
 import com.lipeng.common.vo.ResultVo;
 import com.lipeng.common.vo.UserVo;
+import com.lipeng.consumerdemo.config.DubboReferenceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +46,12 @@ public class OrderController {
         log.info(userService2.getUser(userId));
 
         return userService1.getUserV1(String.valueOf(userId));
+    }
+
+    @GetMapping("/gray")
+    public ResultVo gray() {
+        UserService dubboBean = DubboReferenceUtils.getDubboBean(UserService.class, "1.0.0");
+        return ResultVo.success(dubboBean.getUser(123L));
     }
 
     @GetMapping("/v1/nacos/{userId}")

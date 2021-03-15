@@ -57,6 +57,7 @@ public class DubboReferenceConfig implements InitializingBean {
             application.setName(applicationName);
             // 连接注册中心配置
             RegistryConfig registry = new RegistryConfig();
+            registry.setProtocol("zookeeper");
             if (isGray) {
                 registry.setAddress(grayAddress);
             } else {
