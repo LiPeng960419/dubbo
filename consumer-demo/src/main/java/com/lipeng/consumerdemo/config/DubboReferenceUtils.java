@@ -1,6 +1,7 @@
 package com.lipeng.consumerdemo.config;
 
 import com.alibaba.dubbo.config.ApplicationConfig;
+import com.alibaba.dubbo.config.ConsumerConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -20,10 +20,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DubboReferenceUtils implements InitializingBean {
-
-    @Value("${dubbo.application.name}")
-    private String applicationName1;
-    private static String applicationName;
 
     @Bean("prodRegistryConfig")
     @ConfigurationProperties(prefix = "dubbo.registries.prod")
@@ -46,6 +42,14 @@ public class DubboReferenceUtils implements InitializingBean {
     @Qualifier("prodRegistryConfig")
     private RegistryConfig prodRegistryConfig1;
     private static RegistryConfig prodRegistryConfig;
+
+    @Autowired
+    private ConsumerConfig consumerConfig1;
+    private static ConsumerConfig consumerConfig;
+
+    @Autowired
+    private ApplicationConfig applicationConfig1;
+    private static ApplicationConfig applicationConfig;
 
     public static <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion) {
         return getDubboBean(dubboVersion, dubboClasss, false);
@@ -70,17 +74,16 @@ public class DubboReferenceUtils implements InitializingBean {
      */
     public static <T> T getDubboBean(String dubboVersion, Class<T> dubboClasss, boolean isGray) {
         try {
-            // 当前应用配置
-            ApplicationConfig application = new ApplicationConfig();
-            application.setName(applicationName);
             // 连接注册中心配置
             RegistryConfig registryConfig = isGray ? grayRegistryConfig : prodRegistryConfig;
             // 注意：ReferenceConfig为重对象，内部封装了与注册中心的连接，以及与服务提供方的连接
             // 引用远程服务
             ReferenceConfig reference = new ReferenceConfig();
-            reference.setApplication(application);
+            // 当前应用配置
+            reference.setApplication(applicationConfig);
+            // 消费端配置
+            reference.setConsumer(consumerConfig);
             // 多个注册中心可以用setRegistries()
-            reference.setCheck(false);
             reference.setRegistry(registryConfig);
             reference.setInterface(dubboClasss);
             reference.setVersion(StringUtils.isEmpty(dubboVersion) ? "1.0.0" : dubboVersion);
@@ -94,9 +97,10 @@ public class DubboReferenceUtils implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        applicationName = applicationName1;
         prodRegistryConfig = prodRegistryConfig1;
         grayRegistryConfig = grayRegistryConfig1;
+        consumerConfig = consumerConfig1;
+        applicationConfig = applicationConfig1;
     }
 
 }
