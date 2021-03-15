@@ -1,12 +1,26 @@
 dubbo:
+  config:
+    multiple: true
+  registries:
+    prod:
+      id: prod
+      address: 192.168.7.1:2181
+      protocol: zookeeper
+      check: false
+      default: true
+    gray:
+      id: gray
+      address: 115.159.144.187:2181,115.159.144.187:2182,115.159.144.187:2183
+      protocol: zookeeper
+      check: false
   application:
     name: provider-demo
-  registry:
-    address: 192.168.7.1:2181
-    protocol: zookeeper
-    #    address: 192.168.7.1:8848
-    #    protocol: nacos
-    check: true # true注册订阅失败时报错
+#  registry:
+#    address: 192.168.7.1:2181
+#    protocol: zookeeper
+#    #    address: 192.168.7.1:8848
+#    #    protocol: nacos
+#    check: false # true注册订阅失败时报错
   protocol:
     id: dubbo
     name: dubbo #协议名称
