@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DubboReferenceUtils implements InitializingBean {
 
+    private static final String DEFAULT_VERSION = "1.0.0";
+
     @Bean("prodRegistryConfig")
     @ConfigurationProperties(prefix = "dubbo.registries.prod")
     public RegistryConfig prodRegistryConfig() {
@@ -86,7 +88,7 @@ public class DubboReferenceUtils implements InitializingBean {
             // 多个注册中心可以用setRegistries()
             reference.setRegistry(registryConfig);
             reference.setInterface(dubboClasss);
-            reference.setVersion(StringUtils.isEmpty(dubboVersion) ? "1.0.0" : dubboVersion);
+            reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
             Object obj = reference.get();
             return (T) obj;
         } catch (Exception e) {
