@@ -50,7 +50,7 @@ public class OrderController {
 
     @GetMapping("/gray")
     public ResultVo gray() {
-        UserService dubboBean = DubboReferenceUtils.getDubboBean(UserService.class, "1.0.0");
+        UserService dubboBean = DubboReferenceUtils.getGrayDubboBean(UserService.class, "1.0.0");
         return ResultVo.success(dubboBean.getUser(123L));
     }
 
