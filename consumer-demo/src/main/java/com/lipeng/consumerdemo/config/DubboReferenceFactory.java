@@ -53,7 +53,7 @@ public class DubboReferenceFactory {
 	}
 
 	/**
-	 * 动态获取线上环境或者灰度环境的bean，根据isGray
+	 * 动态获取线上环境或者灰度环境的bean
 	 *
 	 * @param dubboVersion
 	 * @param dubboClasss
