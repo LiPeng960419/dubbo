@@ -57,7 +57,6 @@ public class DubboReferenceFactory {
 	 *
 	 * @param dubboVersion
 	 * @param dubboClasss
-	 * @param isGray
 	 * @param <T>
 	 * @return
 	 */
@@ -67,7 +66,11 @@ public class DubboReferenceFactory {
 			HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
 
 			// 连接注册中心配置
-			RegistryConfig registryConfig = ips.contains(IpTraceUtils.getIp()) ? grayRegistryConfig : prodRegistryConfig;
+			boolean gray = ips.contains(IpTraceUtils.getIp());
+			if (gray) {
+				log.info("当前用户IP:{}访问灰度服务", IpTraceUtils.getIp());
+			}
+			RegistryConfig registryConfig = gray ? grayRegistryConfig : prodRegistryConfig;
 			// 注意：ReferenceConfig为重对象，内部封装了与注册中心的连接，以及与服务提供方的连接
 			// 引用远程服务
 			ReferenceConfig reference = new ReferenceConfig();
