@@ -1,12 +1,14 @@
 package com.lipeng.consumerdemo.config;
 
 import com.alibaba.dubbo.common.utils.ConfigUtils;
+import com.alibaba.dubbo.config.RegistryConfig;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @Author: lipeng
@@ -15,6 +17,18 @@ import javax.annotation.PostConstruct;
 @Component
 @Slf4j
 public class DubboConfig {
+
+    @Bean("prodRegistryConfig")
+    @ConfigurationProperties(prefix = "dubbo.registries.prod")
+    public RegistryConfig prodRegistryConfig() {
+        return new RegistryConfig();
+    }
+
+    @Bean("grayRegistryConfig")
+    @ConfigurationProperties(prefix = "dubbo.registries.gray")
+    public RegistryConfig grayRegistryConfig() {
+        return new RegistryConfig();
+    }
 
     @Autowired
     private ConfigurableApplicationContext configurableApplicationContext;
