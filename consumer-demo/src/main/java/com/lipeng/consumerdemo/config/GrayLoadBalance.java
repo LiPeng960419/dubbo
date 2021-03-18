@@ -29,6 +29,14 @@ public class GrayLoadBalance extends AbstractLoadBalance {
 
     public static final String GRAY = "gray";
 
+    /**
+     * 必须有多个服务提供者才能 选择负载均衡  否则默认get(0) 不会执行这里逻辑
+     * @param invokers
+     * @param url
+     * @param invocation
+     * @param <T>
+     * @return
+     */
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         List<Invoker<T>> list = new ArrayList<>(invokers);
