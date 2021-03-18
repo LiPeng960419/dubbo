@@ -6,6 +6,7 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.cluster.loadbalance.AbstractLoadBalance;
+import com.lipeng.common.utils.IpTraceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
@@ -31,17 +32,15 @@ public class GrayLoadBalance extends AbstractLoadBalance {
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         List<Invoker<T>> list = new ArrayList<>(invokers);
+        // 可以通过RpcContext attachments 或者通过filter传递参数
         Map<String, String> map = RpcContext.getContext().getAttachments();
         String userId = map.get("userId");
-        String userIp = map.get("userIp");
         String userIds = basicConf.getGrayPushUsers();
-        // userIps和userIds一样，这里就不再重复演示了
-        String userIps = basicConf.getGrayPushIps();
         List<Invoker<T>> grayList = new ArrayList<>();
         boolean isGray = false;
         if (StringUtils.isNotBlank(userIds) && StringUtils.isNotBlank(userId)) {
-            String[] uids = userIds.split(",");
-            if (Arrays.asList(uids).contains(userId)) {
+            HashSet<String> users = new HashSet<>(Arrays.asList(userIds.split(",")));
+            if (users.contains(userId)) {
                 isGray = true;
                 Iterator<Invoker<T>> iterator = list.iterator();
                 while (iterator.hasNext()) {
@@ -56,6 +55,24 @@ public class GrayLoadBalance extends AbstractLoadBalance {
                 }
             }
         }
+
+        HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
+        // 如果userid不是灰度，那根据ip判断灰度
+        if (!isGray || !CollectionUtils.isEmpty(ips) && ips.contains(IpTraceUtils.getIp())) {
+            isGray = true;
+            Iterator<Invoker<T>> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                Invoker<T> invoker = iterator.next();
+                String profile = invoker.getUrl().getParameter("profile", "prod");
+                if (GRAY.equals(profile)) {
+                    grayList.add(invoker);
+                } else {
+                    // 如果灰度用户没找到灰度服务那么就访问不到了
+                    iterator.remove();
+                }
+            }
+        }
+
         if (isGray && CollectionUtils.isEmpty(grayList)) {
             if (CollectionUtils.isEmpty(grayList)) {
                 log.warn("未找到灰度服务,当前用户id:{}", userId);
