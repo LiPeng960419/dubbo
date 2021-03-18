@@ -62,24 +62,26 @@ public class GrayLoadBalance extends AbstractLoadBalance {
             checkIp = false;
         }
 
-        HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
         // 如果userid不是灰度，那根据ip判断灰度
-        if (checkIp && !CollectionUtils.isEmpty(ips) && ips.contains(IpTraceUtils.getIp())) {
-            isGray = true;
-            Iterator<Invoker<T>> iterator = list.iterator();
-            while (iterator.hasNext()) {
-                Invoker<T> invoker = iterator.next();
-                String profile = invoker.getUrl().getParameter("profile", "prod");
-                if (GRAY.equals(profile)) {
-                    grayList.add(invoker);
-                } else {
-                    // 如果灰度用户没找到灰度服务那么就访问不到了
-                    iterator.remove();
+        if (checkIp) {
+            HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
+            if (!CollectionUtils.isEmpty(ips) && ips.contains(IpTraceUtils.getIp())) {
+                isGray = true;
+                Iterator<Invoker<T>> iterator = list.iterator();
+                while (iterator.hasNext()) {
+                    Invoker<T> invoker = iterator.next();
+                    String profile = invoker.getUrl().getParameter("profile", "prod");
+                    if (GRAY.equals(profile)) {
+                        grayList.add(invoker);
+                    } else {
+                        // 如果灰度用户没找到灰度服务那么就访问不到了
+                        iterator.remove();
+                    }
                 }
             }
         }
 
-        if (isGray && CollectionUtils.isEmpty(grayList)) {
+        if (isGray) {
             if (CollectionUtils.isEmpty(grayList)) {
                 log.warn("未找到灰度服务,当前用户id:{}", userId);
                 throw new RpcException("未找到灰度服务,当前用户id:" + userId);
