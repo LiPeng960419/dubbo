@@ -27,10 +27,9 @@ public class GrayLoadBalance extends AbstractLoadBalance {
         this.basicConf = basicConf;
     }
 
-    public static final String GRAY = "gray";
-
     /**
      * 必须有多个服务提供者才能 选择负载均衡  否则默认get(0) 不会执行这里逻辑
+     *
      * @param invokers
      * @param url
      * @param invocation
@@ -53,8 +52,8 @@ public class GrayLoadBalance extends AbstractLoadBalance {
                 Iterator<Invoker<T>> iterator = list.iterator();
                 while (iterator.hasNext()) {
                     Invoker<T> invoker = iterator.next();
-                    String profile = invoker.getUrl().getParameter("profile", "prod");
-                    if (GRAY.equals(profile)) {
+                    String profile = invoker.getUrl().getParameter(ProfileEnum.PROFILE, ProfileEnum.PROD.getCode());
+                    if (ProfileEnum.GRAY.getCode().equals(profile)) {
                         grayList.add(invoker);
                     } else {
                         // 如果灰度用户没找到灰度服务那么就访问不到了
@@ -78,8 +77,8 @@ public class GrayLoadBalance extends AbstractLoadBalance {
                 Iterator<Invoker<T>> iterator = list.iterator();
                 while (iterator.hasNext()) {
                     Invoker<T> invoker = iterator.next();
-                    String profile = invoker.getUrl().getParameter("profile", "prod");
-                    if (GRAY.equals(profile)) {
+                    String profile = invoker.getUrl().getParameter(ProfileEnum.PROFILE, ProfileEnum.PROD.getCode());
+                    if (ProfileEnum.GRAY.getCode().equals(profile)) {
                         grayList.add(invoker);
                     } else {
                         // 如果灰度用户没找到灰度服务那么就访问不到了
@@ -103,8 +102,8 @@ public class GrayLoadBalance extends AbstractLoadBalance {
         Iterator<Invoker<T>> iterator = seversExcludeGray.iterator();
         while (iterator.hasNext()) {
             Invoker<T> invoker = iterator.next();
-            String profile = invoker.getUrl().getParameter("profile", "prod");
-            if (GRAY.equals(profile)) {
+            String profile = invoker.getUrl().getParameter(ProfileEnum.PROFILE, ProfileEnum.PROD.getCode());
+            if (ProfileEnum.GRAY.getCode().equals(profile)) {
                 iterator.remove();
             }
         }
