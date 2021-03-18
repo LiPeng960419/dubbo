@@ -6,6 +6,7 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.cluster.loadbalance.AbstractLoadBalance;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @Author: lipeng
  * @Date: 2021/03/11 18:17
  */
+@Slf4j
 public class GrayLoadBalance extends AbstractLoadBalance {
 
     private BasicConf basicConf;
@@ -36,9 +38,11 @@ public class GrayLoadBalance extends AbstractLoadBalance {
         // userIps和userIds一样，这里就不再重复演示了
         String userIps = basicConf.getGrayPushIps();
         List<Invoker<T>> grayList = new ArrayList<>();
+        boolean isGray = false;
         if (StringUtils.isNotBlank(userIds) && StringUtils.isNotBlank(userId)) {
             String[] uids = userIds.split(",");
             if (Arrays.asList(uids).contains(userId)) {
+                isGray = true;
                 Iterator<Invoker<T>> iterator = list.iterator();
                 while (iterator.hasNext()) {
                     Invoker<T> invoker = iterator.next();
@@ -52,9 +56,16 @@ public class GrayLoadBalance extends AbstractLoadBalance {
                 }
             }
         }
-        if (!CollectionUtils.isEmpty(grayList)) {
-            return this.randomSelect(grayList, url, invocation);
+        if (isGray && CollectionUtils.isEmpty(grayList)) {
+            if (CollectionUtils.isEmpty(grayList)) {
+                log.warn("未找到灰度服务,当前用户id:{}", userId);
+                throw new RpcException("未找到灰度服务,当前用户id:" + userId);
+            } else {
+                log.info("当前用户:{}正在走灰度服务", userId);
+                return this.randomSelect(grayList, url, invocation);
+            }
         }
+        // 不是灰度用户 排除灰度服务 走正式服务
         List<Invoker<T>> seversExcludeGray = new ArrayList<>(list);
         Iterator<Invoker<T>> iterator = seversExcludeGray.iterator();
         while (iterator.hasNext()) {
@@ -64,6 +75,7 @@ public class GrayLoadBalance extends AbstractLoadBalance {
                 iterator.remove();
             }
         }
+        log.info("当前用户:{}正在走正式服务", userId);
         return this.randomSelect(seversExcludeGray, url, invocation);
     }
 
