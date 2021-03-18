@@ -56,9 +56,15 @@ public class GrayLoadBalance extends AbstractLoadBalance {
             }
         }
 
+        // 如果是 user是灰度 且灰度服务列表不为空 那么不走ip灰度校验了
+        boolean checkIp = true;
+        if (isGray && !CollectionUtils.isEmpty(grayList)) {
+            checkIp = false;
+        }
+
         HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
         // 如果userid不是灰度，那根据ip判断灰度
-        if (!isGray || !CollectionUtils.isEmpty(ips) && ips.contains(IpTraceUtils.getIp())) {
+        if (checkIp && !CollectionUtils.isEmpty(ips) && ips.contains(IpTraceUtils.getIp())) {
             isGray = true;
             Iterator<Invoker<T>> iterator = list.iterator();
             while (iterator.hasNext()) {
