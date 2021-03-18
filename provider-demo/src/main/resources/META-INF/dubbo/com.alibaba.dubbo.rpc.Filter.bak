@@ -1,0 +1,3 @@
+CustomProviderLogFilter=com.lipeng.common.filter.CustomProviderLogFilter
+RedisRateLimitFilter=com.lipeng.providerdemo.filter.RedisRateLimitFilter
+tps=com.alibaba.dubbo.rpc.filter.TpsLimitFilter
