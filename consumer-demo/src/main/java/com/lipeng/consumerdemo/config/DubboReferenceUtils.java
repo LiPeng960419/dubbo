@@ -25,8 +25,10 @@ import java.util.Map;
 public class DubboReferenceUtils implements InitializingBean {
 
     private static final String DEFAULT_VERSION = "1.0.0";
-    private static final String KEY_REFERENCE = "key_reference";
-    private static final String KEY_INVOKE_REFERENCE = "key_invoke_reference";
+    private static final String KEY_REFERENCE_PROD = "key_reference_prod";
+    private static final String KEY_REFERENCE_GRAY = "key_reference_gray";
+    private static final String KEY_INVOKE_REFERENCE_PROD = "key_invoke_reference_prod";
+    private static final String KEY_INVOKE_REFERENCE_GRAY = "key_invoke_reference_gray";
 
     @Autowired
     @Qualifier("grayRegistryConfig")
@@ -83,8 +85,8 @@ public class DubboReferenceUtils implements InitializingBean {
             reference.setRegistry(registryConfig);
             reference.setInterface(dubboClasss);
             reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(KEY_REFERENCE);
-            return cache.get(reference);
+            return isGray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
+                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
         } catch (Exception e) {
             log.error("getDubboBean error", e);
             return null;
@@ -92,15 +94,15 @@ public class DubboReferenceUtils implements InitializingBean {
     }
 
     public static Object genericInvoke(Class interfaceClass, String methodName, List<Map<String, Object>> parameters) {
-        return genericInvoke(interfaceClass, null, methodName, parameters);
+        return genericInvoke(interfaceClass, null, false, methodName, parameters);
     }
 
-    public static Object genericInvoke(Class interfaceClass, String dubboVersion, String methodName, List<Map<String, Object>> parameters) {
+    public static Object genericInvoke(Class interfaceClass, String dubboVersion, boolean isGray, String methodName, List<Map<String, Object>> parameters) {
         // 用com.alibaba.dubbo.rpc.service.GenericService可以替代所有接口引用
         ReferenceConfig<GenericService> reference = new ReferenceConfig<GenericService>();
         reference.setApplication(applicationConfig);
         reference.setConsumer(consumerConfig);
-        reference.setRegistry(prodRegistryConfig);
+        reference.setRegistry(isGray ? grayRegistryConfig : prodRegistryConfig);
         reference.setInterface(interfaceClass); // 接口名
         reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
         reference.setGeneric(true); // 声明为泛化接口
@@ -108,7 +110,7 @@ public class DubboReferenceUtils implements InitializingBean {
         需要缓存，否则重复生成ReferenceConfig可能造成性能问题并且会有内存和连接泄漏。
         API方式编程时，容易忽略此问题。
         这里使用dubbo内置的简单缓存工具类进行缓存*/
-        ReferenceConfigCache cache = ReferenceConfigCache.getCache(KEY_INVOKE_REFERENCE);
+        ReferenceConfigCache cache = isGray ? ReferenceConfigCache.getCache(KEY_INVOKE_REFERENCE_GRAY) : ReferenceConfigCache.getCache(KEY_INVOKE_REFERENCE_PROD);
         GenericService genericService = cache.get(reference);
 
         int len = parameters.size();
