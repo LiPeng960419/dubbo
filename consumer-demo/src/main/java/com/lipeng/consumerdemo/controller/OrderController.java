@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author: lipeng 910138
  * @Date: 2019/9/23 16:41
@@ -53,12 +57,21 @@ public class OrderController {
         return userService1.getUserV1(String.valueOf(userId));
     }
 
+    @GetMapping("/invoke")
+    public ResultVo invoke() {
+        Map map = new HashMap<>();
+        map.put("ParamType", "java.lang.Long");  //后端接口参数类型
+        map.put("Object", 1);  //用以调用后端接口的实参
+        Object getUser = DubboReferenceUtils.genericInvoke(UserService.class, "getUser", Collections.singletonList(map));
+        return ResultVo.success(getUser);
+    }
+
     @GetMapping("/gray")
     public ResultVo gray() {
-        UserService bean = dubboReferenceFactory.getDubboBean(UserService.class, "1.0.0");
-        String user = bean.getUser(345L);
-//        UserService dubboBean = DubboReferenceUtils.getGrayDubboBean(UserService.class, "1.0.0");
-//        user = dubboBean.getUser(123L);
+//        UserService bean = dubboReferenceFactory.getDubboBean(UserService.class, "1.0.0");
+//        String user = bean.getUser(345L);
+        UserService dubboBean = DubboReferenceUtils.getGrayDubboBean(UserService.class, "1.0.0");
+        String user = dubboBean.getUser(123L);
         return ResultVo.success(user);
     }
 
