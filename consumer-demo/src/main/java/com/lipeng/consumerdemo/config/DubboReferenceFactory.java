@@ -6,6 +6,8 @@ import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import com.lipeng.common.utils.IpTraceUtils;
+import java.util.Arrays;
+import java.util.HashSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * @Author: lipeng
@@ -88,8 +87,12 @@ public class DubboReferenceFactory {
             reference.setRegistry(registryConfig);
             reference.setInterface(dubboClasss);
             reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
-            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY, new CustomKeyGenerator(gray)).get(reference)
-                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD, new CustomKeyGenerator(gray)).get(reference);
+            // 由于这里通过key来区分线上和灰度 所以不用重写KeyGenerator
+			// 如果同一服务 想要进行差异化调用 则可以在里面重写
+            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
+                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
+//            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY, new CustomKeyGenerator(gray)).get(reference)
+//                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD, new CustomKeyGenerator(gray)).get(reference);
         } catch (Exception e) {
             log.error("getDubboBean error", e);
             return null;
