@@ -6,6 +6,8 @@ import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import com.lipeng.common.utils.IpTraceUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,12 +88,49 @@ public class DubboReferenceFactory {
             reference.setRegistry(registryConfig);
             reference.setInterface(dubboClasss);
             reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
-
-            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
-                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
+            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY, new CustomKeyGenerator(gray)).get(reference)
+                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD, new CustomKeyGenerator(gray)).get(reference);
         } catch (Exception e) {
             log.error("getDubboBean error", e);
             return null;
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class CustomKeyGenerator implements ReferenceConfigCache.KeyGenerator {
+
+        private boolean isGray;
+
+        @Override
+        public String generateKey(ReferenceConfig<?> referenceConfig) {
+            String iName = referenceConfig.getInterface();
+            if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(iName)) {
+                Class<?> clazz = referenceConfig.getInterfaceClass();
+                iName = clazz.getName();
+            }
+
+            if (com.alibaba.dubbo.common.utils.StringUtils.isBlank(iName)) {
+                throw new IllegalArgumentException("No interface info in ReferenceConfig" + referenceConfig);
+            } else {
+                StringBuilder ret = new StringBuilder();
+                if (!com.alibaba.dubbo.common.utils.StringUtils.isBlank(referenceConfig.getGroup())) {
+                    ret.append(referenceConfig.getGroup()).append("/");
+                }
+
+                ret.append(iName);
+                if (!com.alibaba.dubbo.common.utils.StringUtils.isBlank(referenceConfig.getVersion())) {
+                    ret.append(":").append(referenceConfig.getVersion());
+                }
+
+                if (isGray) {
+                    ret.append(":").append(ProfileEnum.GRAY.getCode());
+                } else {
+                    ret.append(":").append(ProfileEnum.PROD.getCode());
+                }
+
+                return ret.toString();
+            }
         }
     }
 
