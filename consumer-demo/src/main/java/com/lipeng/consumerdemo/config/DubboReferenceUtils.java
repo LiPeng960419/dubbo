@@ -25,10 +25,10 @@ import java.util.Map;
 public class DubboReferenceUtils implements InitializingBean {
 
     private static final String DEFAULT_VERSION = "1.0.0";
-    private static final String KEY_REFERENCE_PROD = "key_reference_prod";
-    private static final String KEY_REFERENCE_GRAY = "key_reference_gray";
-    private static final String KEY_INVOKE_REFERENCE_PROD = "key_invoke_reference_prod";
-    private static final String KEY_INVOKE_REFERENCE_GRAY = "key_invoke_reference_gray";
+    private static final String KEY_REFERENCE_PROD = DubboReferenceUtils.class.getName() + "_key_reference_prod";
+    private static final String KEY_REFERENCE_GRAY = DubboReferenceUtils.class.getName() + "_key_reference_gray";
+    private static final String KEY_INVOKE_REFERENCE_PROD = DubboReferenceUtils.class.getName() + "_key_invoke_reference_prod";
+    private static final String KEY_INVOKE_REFERENCE_GRAY = DubboReferenceUtils.class.getName() + "_key_invoke_reference_gray";
 
     @Autowired
     @Qualifier("grayRegistryConfig")
