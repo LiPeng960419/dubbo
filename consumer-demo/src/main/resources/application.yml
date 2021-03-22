@@ -44,4 +44,4 @@ app:
 apollo:
   bootstrap:
     enabled: true
-  meta: http://127.0.0.1:8080
+  meta: http://127.0.0.1:8081,http://127.0.0.1:8082
