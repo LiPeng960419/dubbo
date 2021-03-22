@@ -21,17 +21,17 @@ public class DubboConfig {
 
     @PostConstruct
     public void registerShutdownHook() {
-        log.info("[SpringBootShutdownHook] Register ShutdownHook....");
+        log.info("[DubboConfig] Register ShutdownHook....");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                System.setProperty("dubbo.service.shutdown.wait", "2000");
+                System.setProperty("dubbo.service.shutdown.wait", "5000");
                 int timeOut = ConfigUtils.getServerShutdownTimeout();
-                log.info("[SpringBootShutdownHook] Application need sleep {} seconds to wait Dubbo shutdown", (double) timeOut / 1000.0D);
+                log.info("[DubboConfig] Application need sleep {} seconds to wait Dubbo shutdown", (double) timeOut / 1000.0D);
                 Thread.sleep(timeOut);
                 configurableApplicationContext.close();
-                log.info("[SpringBootShutdownHook] ApplicationContext closed, Application shutdown");
+                log.info("[DubboConfig] ApplicationContext closed, Application shutdown");
             } catch (InterruptedException e) {
-                log.info("[SpringBootShutdownHook] Dubbo shutdown hook close error");
+                log.info("[DubboConfig] Dubbo shutdown hook close error");
             }
         }));
     }
