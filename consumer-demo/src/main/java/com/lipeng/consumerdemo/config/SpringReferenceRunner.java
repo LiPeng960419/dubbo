@@ -24,7 +24,7 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
     private static ApplicationContext applicationContext;
 
     private static boolean inited = false;
-    private static boolean shouldBreak = false;
+    private static boolean shouldBreak;
 
     /**
      * 如果消费组这里设置reference时 提供者没启动 获取到的reference为null
@@ -39,9 +39,12 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
         Set<Class<?>> set = f.getTypesAnnotatedWith(RestController.class);
         new Thread(() -> {
             while (!inited) {
+                shouldBreak = false;
                 try {
                     for (Class<?> c : set) {
                         if (shouldBreak) {
+                            log.error("加载reference失败,休眠5s继续获取reference");
+                            Thread.sleep(5000);
                             break;
                         }
                         if (c.isAnnotationPresent(RestController.class)) {
