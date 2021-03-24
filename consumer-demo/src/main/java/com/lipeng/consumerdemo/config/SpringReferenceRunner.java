@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Field;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Component
@@ -24,7 +23,8 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
 
     private static ApplicationContext applicationContext;
 
-    private static final AtomicBoolean init = new AtomicBoolean(false);
+    private static boolean inited = false;
+    private static boolean shouldBreak = false;
 
     /**
      * 如果消费组这里设置reference时 提供者没启动 获取到的reference为null
@@ -34,13 +34,16 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
      */
     @Override
     public void run(String... args) {
+        String packageName = "com.lipeng.consumerdemo";
+        Reflections f = new Reflections(packageName);
+        Set<Class<?>> set = f.getTypesAnnotatedWith(RestController.class);
         new Thread(() -> {
-            while (!init.get()) {
+            while (!inited) {
                 try {
-                    String packageName = "com.lipeng.consumerdemo";
-                    Reflections f = new Reflections(packageName);
-                    Set<Class<?>> set = f.getTypesAnnotatedWith(RestController.class);
                     for (Class<?> c : set) {
+                        if (shouldBreak) {
+                            break;
+                        }
                         if (c.isAnnotationPresent(RestController.class)) {
                             Field[] declaredFields = c.getDeclaredFields();
                             for (Field field : declaredFields) {
@@ -55,12 +58,17 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
                                     consumerConfig.setStub(stub);
                                     Object bean = applicationContext.getBean(c);
                                     Class<?> type = field.getType();
-                                    field.set(bean, factory.getDubboBean(type, version, consumerConfig));
+                                    Object dubboBean = factory.getDubboBean(type, version, consumerConfig);
+                                    if (dubboBean == null) {
+                                        shouldBreak = true;
+                                        break;
+                                    }
+                                    field.set(bean, dubboBean);
+                                    inited = true;
                                 }
                             }
                         }
                     }
-                    init.set(true);
                 } catch (Exception e) {
                     log.error("SpringReference init error", e);
                 }
