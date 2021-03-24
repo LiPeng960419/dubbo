@@ -48,7 +48,7 @@ public class DubboReferenceFactory {
     private ApplicationConfig applicationConfig;
 
     public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion) {
-        return getDubboBean(dubboClasss, dubboVersion, null);
+        return getDubboBean(dubboClasss, dubboVersion, null, true);
     }
 
     /**
@@ -60,7 +60,7 @@ public class DubboReferenceFactory {
      * @param <T>
      * @return
      */
-    public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion, ConsumerConfig customConsumerConfig) {
+    public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion, ConsumerConfig customConsumerConfig, boolean cache) {
         //HashSet<String> users = new HashSet<>(Arrays.asList(basicConf.getGrayPushUsers().split(",")));
         HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
 
@@ -90,8 +90,12 @@ public class DubboReferenceFactory {
         reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
         // 由于这里通过key来区分线上和灰度 所以不用重写KeyGenerator
         // 如果同一服务 想要进行差异化调用 则可以在里面重写
-        return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
-                : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
+        if (cache) {
+            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
+                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
+        } else {
+            return reference.get();
+        }
 //            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY, new CustomKeyGenerator(gray)).get(reference)
 //                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD, new CustomKeyGenerator(gray)).get(reference);
     }

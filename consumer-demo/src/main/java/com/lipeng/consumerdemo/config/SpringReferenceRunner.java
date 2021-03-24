@@ -54,7 +54,7 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
                                     consumerConfig.setStub(stub);
                                     Object bean = applicationContext.getBean(c);
                                     Class<?> type = field.getType();
-                                    Object dubboBean = factory.getDubboBean(type, version, consumerConfig);
+                                    Object dubboBean = factory.getDubboBean(type, version, consumerConfig, false);
                                     if (dubboBean == null) {
                                         log.error("加载reference失败,type:{},version:{}", type.getName(), version);
                                         throw new RuntimeException("加载reference失败");
