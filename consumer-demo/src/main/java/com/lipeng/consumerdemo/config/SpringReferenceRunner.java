@@ -24,7 +24,6 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
     private static ApplicationContext applicationContext;
 
     private static boolean inited = false;
-    private static boolean shouldBreak;
 
     /**
      * 如果消费组这里设置reference时 提供者没启动 获取到的reference为null
@@ -39,14 +38,8 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
         Set<Class<?>> set = f.getTypesAnnotatedWith(RestController.class);
         new Thread(() -> {
             while (!inited) {
-                shouldBreak = false;
                 try {
                     for (Class<?> c : set) {
-                        if (shouldBreak) {
-                            log.error("加载reference失败,休眠5s继续获取reference");
-                            Thread.sleep(5000);
-                            break;
-                        }
                         if (c.isAnnotationPresent(RestController.class)) {
                             Field[] declaredFields = c.getDeclaredFields();
                             for (Field field : declaredFields) {
@@ -63,8 +56,8 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
                                     Class<?> type = field.getType();
                                     Object dubboBean = factory.getDubboBean(type, version, consumerConfig);
                                     if (dubboBean == null) {
-                                        shouldBreak = true;
-                                        break;
+                                        log.error("加载reference失败,type:{},version:{}", type.getName(), version);
+                                        throw new RuntimeException("加载reference失败");
                                     }
                                     field.set(bean, dubboBean);
                                     inited = true;
@@ -73,7 +66,13 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
                         }
                     }
                 } catch (Exception e) {
-                    log.error("SpringReference init error", e);
+                    inited = false;
+                    log.error("加载reference失败,休眠5s继续获取reference", e);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException interruptedException) {
+                        //ingore
+                    }
                 }
             }
         }).start();
