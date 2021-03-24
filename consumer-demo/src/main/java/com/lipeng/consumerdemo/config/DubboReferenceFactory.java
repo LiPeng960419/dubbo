@@ -48,7 +48,7 @@ public class DubboReferenceFactory {
     private ApplicationConfig applicationConfig;
 
     public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion) {
-        return getDubboBean(dubboClasss, dubboVersion, null, true);
+        return getDubboBean(dubboClasss, dubboVersion, null);
     }
 
     /**
@@ -60,15 +60,12 @@ public class DubboReferenceFactory {
      * @param <T>
      * @return
      */
-    public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion, ConsumerConfig customConsumerConfig, boolean cache) {
-        //HashSet<String> users = new HashSet<>(Arrays.asList(basicConf.getGrayPushUsers().split(",")));
-        HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
-
-        // 连接注册中心配置
-        boolean gray = ips.contains(IpTraceUtils.getIp());
+    public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion, ConsumerConfig customConsumerConfig) {
+        boolean gray = isGray();
         if (gray) {
             log.info("当前用户IP:{}访问灰度服务", IpTraceUtils.getIp());
         }
+        // 连接注册中心配置
         RegistryConfig registryConfig = gray ? grayRegistryConfig : prodRegistryConfig;
         // 注意：ReferenceConfig为重对象，内部封装了与注册中心的连接，以及与服务提供方的连接
         // 引用远程服务
@@ -90,14 +87,26 @@ public class DubboReferenceFactory {
         reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
         // 由于这里通过key来区分线上和灰度 所以不用重写KeyGenerator
         // 如果同一服务 想要进行差异化调用 则可以在里面重写
-        if (cache) {
-            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
-                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
-        } else {
-            return reference.get();
-        }
+        return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
+                : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
 //            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY, new CustomKeyGenerator(gray)).get(reference)
 //                    : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD, new CustomKeyGenerator(gray)).get(reference);
+    }
+
+    public void destoryReference(Class dubboClasss, String dubboVersion) {
+        HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
+        boolean gray = ips.contains(IpTraceUtils.getIp());
+        ReferenceConfigCache cache = gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY) : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD);
+        ReferenceConfig reference = new ReferenceConfig();
+        reference.setInterface(dubboClasss);
+        reference.setVersion(dubboVersion);
+        cache.destroy(reference);
+    }
+
+    public boolean isGray() {
+        //HashSet<String> users = new HashSet<>(Arrays.asList(basicConf.getGrayPushUsers().split(",")));
+        HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
+        return ips.contains(IpTraceUtils.getIp());
     }
 
     @Data

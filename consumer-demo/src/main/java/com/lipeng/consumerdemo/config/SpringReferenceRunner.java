@@ -27,9 +27,6 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
 
     /**
      * 如果消费组这里设置reference时 提供者没启动 获取到的reference为null
-     *
-     * @param args
-     * @throws Exception
      */
     @Override
     public void run(String... args) {
@@ -54,8 +51,9 @@ public class SpringReferenceRunner implements CommandLineRunner, ApplicationCont
                                     consumerConfig.setStub(stub);
                                     Object bean = applicationContext.getBean(c);
                                     Class<?> type = field.getType();
-                                    Object dubboBean = factory.getDubboBean(type, version, consumerConfig, false);
+                                    Object dubboBean = factory.getDubboBean(type, version, consumerConfig);
                                     if (dubboBean == null) {
+                                        factory.destoryReference(type, version);
                                         log.error("加载reference失败,type:{},version:{}", type.getName(), version);
                                         throw new RuntimeException("加载reference失败");
                                     }
