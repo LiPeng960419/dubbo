@@ -6,15 +6,17 @@ import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import com.lipeng.common.utils.IpTraceUtils;
-import java.util.Arrays;
-import java.util.HashSet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * @Author: lipeng
@@ -46,26 +48,19 @@ public class DubboReferenceFactory {
     private ApplicationConfig applicationConfig;
 
     public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion) {
-        return getDubboBean(dubboVersion, dubboClasss);
-    }
-
-    public <T> T getGrayDubboBean(Class<T> dubboClasss) {
-        return getDubboBean(null, dubboClasss);
-    }
-
-    public <T> T getGrayDubboBean(Class<T> dubboClasss, String dubboVersion) {
-        return getDubboBean(dubboVersion, dubboClasss);
+        return getDubboBean(dubboClasss, dubboVersion, null);
     }
 
     /**
      * 动态获取线上环境或者灰度环境的bean
      *
-     * @param dubboVersion
      * @param dubboClasss
+     * @param dubboVersion
+     * @param consumerConfig
      * @param <T>
      * @return
      */
-    public <T> T getDubboBean(String dubboVersion, Class<T> dubboClasss) {
+    public <T> T getDubboBean(Class<T> dubboClasss, String dubboVersion, ConsumerConfig customConsumerConfig) {
         try {
             //HashSet<String> users = new HashSet<>(Arrays.asList(basicConf.getGrayPushUsers().split(",")));
             HashSet<String> ips = new HashSet<>(Arrays.asList(basicConf.getGrayPushIps().split(",")));
@@ -82,13 +77,20 @@ public class DubboReferenceFactory {
             // 当前应用配置
             reference.setApplication(applicationConfig);
             // 消费端配置
-            reference.setConsumer(consumerConfig);
+            if (customConsumerConfig != null) {
+                ConsumerConfig c = new ConsumerConfig();
+                BeanUtils.copyProperties(consumerConfig, c);
+                BeanUtils.copyProperties(customConsumerConfig, c);
+                reference.setConsumer(c);
+            } else {
+                reference.setConsumer(consumerConfig);
+            }
             // 多个注册中心可以用setRegistries()
             reference.setRegistry(registryConfig);
             reference.setInterface(dubboClasss);
             reference.setVersion(StringUtils.isEmpty(dubboVersion) ? DEFAULT_VERSION : dubboVersion);
             // 由于这里通过key来区分线上和灰度 所以不用重写KeyGenerator
-			// 如果同一服务 想要进行差异化调用 则可以在里面重写
+            // 如果同一服务 想要进行差异化调用 则可以在里面重写
             return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY).get(reference)
                     : ReferenceConfigCache.getCache(KEY_REFERENCE_PROD).get(reference);
 //            return gray ? ReferenceConfigCache.getCache(KEY_REFERENCE_GRAY, new CustomKeyGenerator(gray)).get(reference)

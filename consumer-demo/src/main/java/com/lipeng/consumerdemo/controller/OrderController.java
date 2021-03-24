@@ -8,6 +8,7 @@ import com.lipeng.common.vo.ResultVo;
 import com.lipeng.common.vo.UserVo;
 import com.lipeng.consumerdemo.config.DubboReferenceFactory;
 import com.lipeng.consumerdemo.config.DubboReferenceUtils;
+import com.lipeng.consumerdemo.config.SpringReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,6 +50,9 @@ public class OrderController {
     @Autowired
     private DubboReferenceFactory dubboReferenceFactory;
 
+    @SpringReference(mock = "true", version = "1.0.0", stub = "com.lipeng.consumerdemo.service.UserServiceStub")
+    private UserService userService3;
+
     @GetMapping("/nacos/{userId}")
     public ResultVo nacos(@PathVariable Long userId) {
         log.info(userService1.getUser(userId));
@@ -70,8 +74,9 @@ public class OrderController {
     public ResultVo gray() {
 //        UserService bean = dubboReferenceFactory.getDubboBean(UserService.class, "1.0.0");
 //        String user = bean.getUser(345L);
-        UserService dubboBean = DubboReferenceUtils.getGrayDubboBean(UserService.class, "1.0.0");
-        String user = dubboBean.getUser(123L);
+//        UserService dubboBean = DubboReferenceUtils.getGrayDubboBean(UserService.class, "1.0.0");
+//        String user = dubboBean.getUser(123L);
+        String user = userService3.getUser(123L);
         return ResultVo.success(user);
     }
 
