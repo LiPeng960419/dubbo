@@ -1,7 +1,7 @@
 package com.lipeng.consumerdemo.config;
 
 /**
- * @Author: lipeng6@ybm100.com
+ * @Author: lipeng
  * @Date: 2021/03/18 13:36
  */
 public enum ProfileEnum {

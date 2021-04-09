@@ -82,8 +82,12 @@ public class OrderController {
 
     @GetMapping("/v1/nacos/{userId}")
     public ResultVo v1(@PathVariable Long userId) {
-        RpcContext.getContext().setAttachment("userId", "123");
-        return userService1.getUserV1(String.valueOf(userId));
+        try {
+            RpcContext.getContext().setAttachment("userId", "123");
+            return userService1.getUserV1(String.valueOf(userId));
+        } finally {
+            RpcContext.getContext().clearAttachments();
+        }
     }
 
     @GetMapping("/v2/nacos/{userId}")
