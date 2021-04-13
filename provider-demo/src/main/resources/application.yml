@@ -4,7 +4,7 @@ dubbo:
   registries:
     prod:
       id: prod
-      address: 192.168.7.1:2181
+      address: 115.159.144.187:2181,115.159.144.187:2182,115.159.144.187:2183
       protocol: zookeeper
       check: false
       default: true
@@ -37,12 +37,12 @@ dubbo:
     timeout: 5000 #调用服务超时时间
     retries: 0 #远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
     parameters:
-      profile: gray
+      profile: prod
 server:
   port: 7001  #如果部署多台 端口不同重复
 spring:
   redis:
-    host: 192.168.7.1
+    host: 127.0.0.1
     port: 6379
     timeout: 5000
     lettuce:

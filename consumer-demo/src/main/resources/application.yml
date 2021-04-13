@@ -4,7 +4,7 @@ dubbo:
   registries:
     prod:
       id: prod
-      address: 192.168.7.1:2181
+      address: 115.159.144.187:2181,115.159.144.187:2182,115.159.144.187:2183
       protocol: zookeeper
       check: false
       default: true
@@ -39,9 +39,12 @@ dubbo:
     retries: 0 #远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
 server:
   port: 8001
-app:
-  id: zuul
-apollo:
-  bootstrap:
-    enabled: true
-  meta: http://127.0.0.1:8080
+gray:
+  grayPushUsers: 1233
+  grayPushIps: 127.0.0.11
+#app:
+#  id: zuul
+#apollo:
+#  bootstrap:
+#    enabled: true
+#  meta: http://127.0.0.1:8080

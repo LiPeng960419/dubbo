@@ -1,5 +1,6 @@
 package com.lipeng.consumerdemo.config;
 
+import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.utils.ConfigUtils;
 import com.alibaba.dubbo.config.RegistryConfig;
 import javax.annotation.PostConstruct;
@@ -38,10 +39,11 @@ public class DubboConfig {
         log.info("[SpringBootShutdownHook] Register ShutdownHook....");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                System.setProperty("dubbo.service.shutdown.wait", "2000");
+                System.setProperty(Constants.SHUTDOWN_WAIT_KEY, "8000");
                 int timeOut = ConfigUtils.getServerShutdownTimeout();
                 log.info("[SpringBootShutdownHook] Application need sleep {} seconds to wait Dubbo shutdown", (double) timeOut / 1000.0D);
                 Thread.sleep(timeOut);
+                log.info("[SpringBootShutdownHook] Ready to close configurableApplicationContext");
                 configurableApplicationContext.close();
                 log.info("[SpringBootShutdownHook] ApplicationContext closed, Application shutdown");
             } catch (InterruptedException e) {
