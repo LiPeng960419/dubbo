@@ -13,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class ProviderDemoApplication {
 
     public static void main(String[] args) {
+        System.setProperty("app.name", "ProviderDemoApplication");
         SpringApplication app = new SpringApplication(ProviderDemoApplication.class);
         app.setRegisterShutdownHook(false);
         app.run(args);

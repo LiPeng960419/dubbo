@@ -1,1 +1,3 @@
 CustomConsumerSignFilter=com.lipeng.common.filter.CustomConsumerSignFilter
+catTransaction=com.lipeng.common.catmonitor.CatTransaction
+appnameAppend=com.lipeng.common.catmonitor.AppNameAppendFilter
