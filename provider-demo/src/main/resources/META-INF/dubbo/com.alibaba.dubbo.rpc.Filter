@@ -1,0 +1,2 @@
+catTransaction=com.lipeng.common.catmonitor.CatTransaction
+appnameAppend=com.lipeng.common.catmonitor.AppNameAppendFilter
