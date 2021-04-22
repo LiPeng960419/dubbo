@@ -33,7 +33,6 @@ dubbo:
     retries: 2 # 不包含第一次调用
     check: false # 启动时检查提供者是否存在，true报错，false忽略
     loadbalance: gray #负载均衡策略，可选值：random,roundrobin,leastactive，分别表示：随机，轮询，最少活跃调用
-    filter: CustomConsumerSignFilter,appnameAppend,catTransaction
   provider:
     timeout: 5000 #调用服务超时时间
     retries: 0 #远程服务调用重试次数，不包括第一次调用，不需要重试请设为0
